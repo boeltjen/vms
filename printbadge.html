@@ -1,161 +1,167 @@
-<style>
-				
-	.reservationFields {
-		font-size: 16px;
-		height: 155px;
-		font-family: sans-serif;
-		line-height: 1.5;
-		padding: 5px 10px 5px 10px;
-	}
+<html>
+<head>
+	<title>Print Badge</title>
+	<style>
 
-	#badgeContainer {	
-		width: 295px;
-		position: relative;
-		height: 215px;
-	    border: thin dashed;
-	}
-
-	.torontoLogo {
-		height:40px;
-		float: right;
-		padding: 5px 10px;
-	}
-
-	.largeContentDiv {
-		height: 50px;
-	}
-
-
-	.visitorLabel {
-		font-family: sans-serif;
-		font-weight: bold;
-	    font-size: 25px;
-	}
-
-	#print-dialog {
-		width: 380px;
-		margin: auto;
-	}
-
-	#full-badge {				
-		position: relative;
-		width: 380px;
-		border: thin dashed;
-		padding: 5px;
-	}
-
-	.fold-under {
-		font-weight: 600;
-		font-family: sans-serif;
-		transform: rotate(
-		90deg);
-		float: right;
-		position: absolute;
-		left: 300px;
-		top: 75px;
-		text-align: center;
-		font-size: 20px;
-		border: thin dashed;
-		padding: 0px 10px;				
-	}
-
-	.visitor-name {
-		font-size: larger;
-		font-weight: bold;
-	}
-	.printButtonDiv {
-		text-align: center;
-		margin: 10px 0px;
-	}
-
-	.printButtonDiv button {
-		padding: 10px 32px;
-		font-size: 18px;
-		font-weight: bold;
-	}
-
-	@media print {
-		.printButtonDiv {
-			display: none;
-		}
-		.printButtonDiv {
-			align: inherit;
-		}
-
-		.fold-under {
-			display:none;
+		.reservationFields {
+			font-size: 16px;
+			height: 155px;
+			font-family: sans-serif;
+			line-height: 1.5;
+			padding: 5px 10px 5px 10px;
 		}
 
 		#badgeContainer {	
-			border: none;
+			width: 295px;
+			position: relative;
+			height: 215px;
+		    border: thin dashed;
 		}
 
-		#full-badge {
-			border: none;
+		.torontoLogo {
+			height:40px;
+			float: right;
+			padding: 5px 10px;
+		}
+
+		.largeContentDiv {
+			height: 50px;
 		}
 
 
-	    	body, html, {
-			margin: 0pt !important;
-			padding: 0pt !important;
-		}
-		
-		@page {
-		   margin: 0pt !important;
-		   padding: 0pt !important;
-		   size: 4in 2.4in landscape;
+		.visitorLabel {
+			font-family: sans-serif;
+			font-weight: bold;
+		    font-size: 25px;
 		}
 
-	}
+		#print-dialog {
+			width: 380px;
+			margin: auto;
+		}
 
-</style>
+		#full-badge {				
+			position: relative;
+			width: 380px;
+			border: thin dashed;
+			padding: 5px;
+		}
 
-<div id="print-dialog">
-	<div id="full-badge">
-		<div class="fold-under">
-			FOLD<br>UNDER<br>V &nbsp; &nbsp; V
-		</div>
-		<div id="badgeContainer">
-			<div class="reservationFields">
-				<div class="visitorlabel">VISITOR-<span id="currentshortdatestr"></span>-<span id="currenttimettr"></span></div>
-				<div class="visitor-name"><span id="Visitorfullname"></span> (<span id="visitortype"></span>)</div>
-				<strong>Visiting: </strong><span id="queue"></span>
-				<br/><strong>Location: </strong><span id="category"></span>
-			</div>
-			<div class="largeContentDiv">
-				<img class="torontoLogo" src="https://images.frontdesksu<span id="meetingHostName"></span>ite.ca/torontotest/Icons/torontologo.647x200.jpg">
-			</div>	
-		</div>
-	</div>
-	<div class="printButtonDiv">
-		<button onclick="window.print(); window.close();">Print</button>
-		&nbsp;&nbsp;
-		<button onclick="window.close();">Close</button>
-	</div>
-</div>
+		.fold-under {
+			font-weight: 600;
+			font-family: sans-serif;
+			transform: rotate(
+			90deg);
+			float: right;
+			position: absolute;
+			left: 300px;
+			top: 75px;
+			text-align: center;
+			font-size: 20px;
+			border: thin dashed;
+			padding: 0px 10px;				
+		}
 
-<script>
-	function getUrlParamsInLC() {
-		var queryString = window.location.search.slice(1);
-		var obj = {};  
-		if (queryString) {
-			queryString = queryString.split('#')[0];
-			var arr = queryString.split('&');
-			for (var i = 0; i < arr.length; i++) {
-				var a = arr[i].split('=');
-				var paramName = a[0];
-				if (!isNaN(paramName)) paramName = "_"+paramName;
-				var paramValue = typeof (a[1]) === 'undefined' ? true : a[1];
-				if (typeof paramValue === 'string') paramValue = paramValue.toLowerCase();
-				obj[paramName] = decodeURIComponent(paramValue);
+		.visitor-name {
+			font-size: larger;
+			font-weight: bold;
+		}
+		.printButtonDiv {
+			text-align: center;
+			margin: 10px 0px;
+		}
+
+		.printButtonDiv button {
+			padding: 10px 32px;
+			font-size: 18px;
+			font-weight: bold;
+		}
+
+		@media print {
+			.printButtonDiv {
+				display: none;
 			}
-		}
-		return obj;
-	};
-	var badgeInfoParams = getUrlParamsInLC();
+			.printButtonDiv {
+				align: inherit;
+			}
 
-	for (var param in badgeInfoParams) {
-		(document.querySelector("#"+param) || {}).innerHTML = ((badgeInfoParams[param] || "").toString()).trim();
-	}
-	
-</script>
+			.fold-under {
+				display:none;
+			}
+
+			#badgeContainer {	
+				border: none;
+			}
+
+			#full-badge {
+				border: none;
+			}
+
+
+			body, html, {
+				margin: 0pt !important;
+				padding: 0pt !important;
+			}
+
+			@page {
+			   margin: 0pt !important;
+			   padding: 0pt !important;
+			   size: 4in 2.4in landscape;
+			}
+
+		}
+
+	</style>
+</head>
+<body>
+	<div id="print-dialog">
+		<div id="full-badge">
+			<div class="fold-under">
+				FOLD<br>UNDER<br>V &nbsp; &nbsp; V
+			</div>
+			<div id="badgeContainer">
+				<div class="reservationFields">
+					<div class="visitorlabel">VISITOR-<span id="currentshortdatestr"></span>-<span id="currenttimettr"></span></div>
+					<div class="visitor-name"><span id="Visitorfullname"></span> (<span id="visitortype"></span>)</div>
+					<strong>Visiting: </strong><span id="queue"></span>
+					<br/><strong>Location: </strong><span id="category"></span>
+				</div>
+				<div class="largeContentDiv">
+					<img class="torontoLogo" src="https://images.frontdesksu<span id="meetingHostName"></span>ite.ca/torontotest/Icons/torontologo.647x200.jpg">
+				</div>	
+			</div>
+		</div>
+		<div class="printButtonDiv">
+			<button onclick="window.print(); window.close();">Print</button>
+			&nbsp;&nbsp;
+			<button onclick="window.close();">Close</button>
+		</div>
+	</div>
+
+	<script>
+		function getUrlParamsInLC() {
+			var queryString = window.location.search.slice(1);
+			var obj = {};  
+			if (queryString) {
+				queryString = queryString.split('#')[0];
+				var arr = queryString.split('&');
+				for (var i = 0; i < arr.length; i++) {
+					var a = arr[i].split('=');
+					var paramName = a[0];
+					if (!isNaN(paramName)) paramName = "_"+paramName;
+					var paramValue = typeof (a[1]) === 'undefined' ? true : a[1];
+					if (typeof paramValue === 'string') paramValue = paramValue.toLowerCase();
+					obj[paramName] = decodeURIComponent(paramValue);
+				}
+			}
+			return obj;
+		};
+		var badgeInfoParams = getUrlParamsInLC();
+
+		for (var param in badgeInfoParams) {
+			(document.querySelector("#"+param) || {}).innerHTML = ((badgeInfoParams[param] || "").toString()).trim();
+		}
+
+	</script>
+</body>
+</html>
