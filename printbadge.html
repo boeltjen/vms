@@ -139,6 +139,14 @@
 	</div>
 
 	<script>
+		function escapeString( stringToEscape ) {
+			return stringToEscape
+				.replace( /&/g, '&amp;' )
+				.replace( /</g, '&lt;' )
+				.replace( />/g, '&gt;' )
+				.replace( /"/g, '&quot;' );
+		};
+		
 		function getUrlParamsInLC() {
 			var queryString = window.location.search.slice(1);
 			var obj = {};  
@@ -159,7 +167,7 @@
 		var badgeInfoParams = getUrlParamsInLC();
 
 		for (var param in badgeInfoParams) {
-			(document.querySelector("#"+param) || {}).innerHTML = ((badgeInfoParams[param] || "").toString()).trim();
+			(document.querySelector("#"+param) || {}).innerHTML = (escapeString((badgeInfoParams[param] || "").toString())).trim();
 		}
 
 	</script>
