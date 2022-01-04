@@ -50,6 +50,3 @@ var printbadgeinfo = function() {
 		window.open('https://boeltjen.github.io/vms/printbadge.html?'+(new URLSearchParams(reservationDataFound)).toString(), 'PRINT', 'height=500,width=700');
 	}
 }
-
-printbadgeinfo();
-
