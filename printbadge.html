@@ -95,10 +95,11 @@
 		}
 
 
-	    body, html, {
+	    	body, html, {
 			margin: 0pt !important;
 			padding: 0pt !important;
 		}
+		
 		@page {
 		   margin: 0pt !important;
 		   padding: 0pt !important;
@@ -134,27 +135,27 @@
 </div>
 
 <script>
-function getUrlParamsInLC() {
-	var queryString = window.location.search.slice(1);
-	var obj = {};  
-	if (queryString) {
-		queryString = queryString.split('#')[0];
-		var arr = queryString.split('&');
-		for (var i = 0; i < arr.length; i++) {
-			var a = arr[i].split('=');
-			var paramName = a[0];
-			if (!isNaN(paramName)) paramName = "_"+paramName;
-			var paramValue = typeof (a[1]) === 'undefined' ? true : a[1];
-			if (typeof paramValue === 'string') paramValue = paramValue.toLowerCase();
-			obj[paramName] = decodeURIComponent(paramValue);
+	function getUrlParamsInLC() {
+		var queryString = window.location.search.slice(1);
+		var obj = {};  
+		if (queryString) {
+			queryString = queryString.split('#')[0];
+			var arr = queryString.split('&');
+			for (var i = 0; i < arr.length; i++) {
+				var a = arr[i].split('=');
+				var paramName = a[0];
+				if (!isNaN(paramName)) paramName = "_"+paramName;
+				var paramValue = typeof (a[1]) === 'undefined' ? true : a[1];
+				if (typeof paramValue === 'string') paramValue = paramValue.toLowerCase();
+				obj[paramName] = decodeURIComponent(paramValue);
+			}
 		}
+		return obj;
+	};
+	var badgeInfoParams = getUrlParamsInLC();
+
+	for (var param in badgeInfoParams) {
+		(document.querySelector("#"+param) || {}).innerHTML = ((badgeInfoParams[param] || "").toString()).trim();
 	}
-	return obj;
-};
-var badgeInfoParams = getUrlParamsInLC();
-	
-for (var param in badgeInfoParams) {
-	(document.querySelector("#"+param) || {}).innerHTML = ((badgeInfoParams[param] || "").toString()).trim();
-}
 	
 </script>
