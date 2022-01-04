@@ -20,11 +20,15 @@ var getBadgeInfo = function() {
 			/*if the ticket is still waiting, but being previewed:*/
 			reservationData["Category"] = (document.querySelectorAll(".actions")[0].parentElement.querySelectorAll(".category")[0] || {"innerText":""}).innerText.trim();
 			reservationData["Queue"] = (document.querySelectorAll(".actions")[0].parentElement.querySelectorAll(".queue")[0] || {"innerText":""}).innerText.trim();
+			reservationData["WaitTimeMinutes"] = (document.querySelectorAll(".actions")[0].parentElement.querySelectorAll("[key='WaitTimeMinutes']")[0] || {"innerText":""}).innerText.trim().slice(0,-5);
+			reservationData["ReservationTime"] = (document.querySelectorAll(".actions")[0].parentElement.querySelectorAll(".display-text")[0] || {"innerText":""}).innerText.trim();
 			
 		} else {
 			/*if the ticket is being called:*/
 			reservationData["Category"] = (document.querySelectorAll(".category")[0] || {"innerText":""}).innerText.trim();
 			reservationData["Queue"] = (document.querySelectorAll(".queue")[0] || {"innerText":""}).innerText.trim();
+			reservationData["WaitTimeMinutes"] = (document.querySelectorAll("[key='WaitTimeMinutes']")[0] || {"innerText":""}).innerText.trim().slice(0,-5);
+			reservationData["Queue"] = (document.querySelectorAll(".display-text")[0] || {"innerText":""}).innerText.trim();
 		}
 
 		var bracketsCheckRegex = /\((.*?)\)/;		
