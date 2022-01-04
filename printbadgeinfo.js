@@ -28,7 +28,7 @@ var getBadgeInfo = function() {
 			reservationData["Category"] = (document.querySelectorAll(".category")[0] || {"innerText":""}).innerText.trim();
 			reservationData["Queue"] = (document.querySelectorAll(".queue")[0] || {"innerText":""}).innerText.trim();
 			reservationData["WaitTimeMinutes"] = (document.querySelectorAll("[key='WaitTimeMinutes']")[0] || {"innerText":""}).innerText.trim().slice(0,-5);
-			reservationData["Queue"] = (document.querySelectorAll(".display-text")[0] || {"innerText":""}).innerText.trim();
+			reservationData["ReservationTime"] = (document.querySelectorAll(".display-text")[0] || {"innerText":""}).innerText.trim();
 		}
 
 		var bracketsCheckRegex = /\((.*?)\)/;		
