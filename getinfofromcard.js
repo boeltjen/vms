@@ -1,8 +1,12 @@
+var getBadgeInfo = function() {	
 	var reservationFieldDivParent = document.getElementsByClassName('reservation-field-values')[0];
-	if(reservationFieldDivParent == undefined) {alert("No Registration Data Displayed for Printing.\n\nPlease Select a Registration and Try Again.");}
-	else {
+	var reservationData = {};
+	if(reservationFieldDivParent == undefined) {
+		reservationData = false;
+		console.log("No Badge Info Found");
+	} else {
+		reservationData = {};
 		var reservationFieldDivs = reservationFieldDivParent.querySelectorAll(".item");
-		var reservationData = {};
 		reservationFieldDivs.forEach(function(itemDiv){
 			var tempItemsArray = itemDiv.innerText.split(/\n/);
 			reservationData[tempItemsArray[0]] = tempItemsArray[1] || "";
@@ -34,5 +38,14 @@
 			reservationData["Queue"] = reservationData["Queue"].substring(0,reservationData["Queue"].toLowerCase().indexOf(" - ward"));
 		}
 
-		window.open('https://boeltjen.github.io/vms/printbadge.html?'+(new URLSearchParams(reservationData)).toString(), 'PRINT', 'height=500,width=700');
 	}
+	return reservationData;
+}
+
+var reservationDataFound = getBadgeInfo();
+if(!reservationDataFound) {
+	console.log("No Registration Data Displayed for Printing.\n\nPlease Select a Registration and Try Again.");
+} else {
+	window.open('https://boeltjen.github.io/vms/printbadge.html?'+(new URLSearchParams(reservationDataFound)).toString(), 'PRINT', 'height=500,width=700');
+}
+
