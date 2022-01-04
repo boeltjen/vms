@@ -1,4 +1,4 @@
-  <style>
+<style>
 				
 	.reservationFields {
 		font-size: 16px;
@@ -116,10 +116,10 @@
 		</div>
 		<div id="badgeContainer">
 			<div class="reservationFields">
-				<div class="visitorLabel">VISITOR-<span id="currentShortDateStr"></span>-<span id="currentTimeStr"></span></div>
-				<div class="visitor-name"><span id="Visitor Full Name"></span> (<span id="Visitor Type"></span>)</div>
-				<strong>Visiting: </strong><span id="Queue"></span>
-				<br/><strong>Location: </strong><span id="Category"></span>
+				<div class="visitorlabel">VISITOR-<span id="currentshortdatestr"></span>-<span id="currenttimettr"></span></div>
+				<div class="visitor-name"><span id="Visitorfullname"></span> (<span id="visitortype"></span>)</div>
+				<strong>Visiting: </strong><span id="queue"></span>
+				<br/><strong>Location: </strong><span id="category"></span>
 			</div>
 			<div class="largeContentDiv">
 				<img class="torontoLogo" src="https://images.frontdesksu<span id="meetingHostName"></span>ite.ca/torontotest/Icons/torontologo.647x200.jpg">
@@ -134,19 +134,27 @@
 </div>
 
 <script>
-  function getUrlParams() {
-    var queryString = window.location.search.slice(1);
-    var obj = {};  
-    if (queryString) {
-      queryString = queryString.split('#')[0];
-      var arr = queryString.split('&');
-      for (var i = 0; i < arr.length; i++) {
-        var a = arr[i].split('=');
-        var paramName = a[0];
-        var paramValue = typeof (a[1]) === 'undefined' ? true : a[1];
-        obj[paramName] = decodeURIComponent(paramValue);
-      }
-    }
-    return obj;
-  };
+function getUrlParamsInLC() {
+	var queryString = window.location.search.slice(1);
+	var obj = {};  
+	if (queryString) {
+		queryString = queryString.split('#')[0];
+		var arr = queryString.split('&');
+		for (var i = 0; i < arr.length; i++) {
+			var a = arr[i].split('=');
+			var paramName = a[0];
+			if (!isNaN(paramName)) paramName = "_"+paramName;
+			var paramValue = typeof (a[1]) === 'undefined' ? true : a[1];
+			if (typeof paramValue === 'string') paramValue = paramValue.toLowerCase();
+			obj[paramName] = decodeURIComponent(paramValue);
+		}
+	}
+	return obj;
+};
+var badgeInfoParams = getUrlParamsInLC();
+	
+for (var param in badgeInfoParams) {
+	(document.querySelector("#"+param) || {}).innerHTML = ((badgeInfoParams[param] || "").toString()).trim();
+}
+	
 </script>
