@@ -34,13 +34,5 @@
 			reservationData["Queue"] = reservationData["Queue"].substring(0,reservationData["Queue"].toLowerCase().indexOf(" - ward"));
 		}
 
-
-		var getBadgePrintWindowHtml = function(badgeInfoParams) {
-			
-		};
-
-		
-		var el = getBadgePrintWindowHtml(reservationData).replace(/\t/g,"");
-
-		var badgePrintWindow = window.open('https://boeltjen.github.io/vms/printbadge.html?'+encodeURIComponent(reservationData), 'PRINT', 'height=500,width=700');
+		window.open('https://boeltjen.github.io/vms/printbadge.html?'+(new URLSearchParams(reservationData)).toString(), 'PRINT', 'height=500,width=700');
 	}
