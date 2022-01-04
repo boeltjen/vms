@@ -147,7 +147,7 @@
 				.replace( /"/g, '&quot;' );
 		};
 		
-		function getUrlParamsInLC() {
+		function getUrlParams() {
 			var queryString = window.location.search.slice(1);
 			var obj = {};  
 			if (queryString) {
@@ -158,13 +158,12 @@
 					var paramName = a[0];
 					if (!isNaN(paramName)) paramName = "_"+paramName;
 					var paramValue = typeof (a[1]) === 'undefined' ? true : a[1];
-					if (typeof paramValue === 'string') paramValue = paramValue.toLowerCase();
 					obj[paramName] = decodeURIComponent(paramValue);
 				}
 			}
 			return obj;
 		};
-		var badgeInfoParams = getUrlParamsInLC();
+		var badgeInfoParams = getUrlParams();
 
 		for (var param in badgeInfoParams) {
 			(document.querySelector("#"+param) || {}).innerHTML = (escapeString((badgeInfoParams[param] || "").toString())).trim();
