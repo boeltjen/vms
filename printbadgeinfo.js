@@ -44,8 +44,8 @@ var getBadgeInfo = function() {
 
 var createUrlSearchString = function(paramObj) {
 	var returnString = "";
-	for (var key in parmObj) {
-		returnString += encodeURIComponent(key) + "=" + encodeURIComponent(parmObj[key]) + "&";
+	for (var key in paramObj) {
+		returnString += encodeURIComponent(key) + "=" + encodeURIComponent(paramObj[key]) + "&";
 	}
 	return returnString.slice(0, -1);
 }
