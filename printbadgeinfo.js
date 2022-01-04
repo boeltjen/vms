@@ -42,10 +42,16 @@ var getBadgeInfo = function() {
 	return reservationData;
 }
 
-var createUrlSearchString = function(paramObj) {
+var createUrlSearchString = function(paramObj,stripWhiteAndLowerCase) {
 	var returnString = "";
 	for (var key in paramObj) {
-		returnString += encodeURIComponent(key) + "=" + encodeURIComponent(paramObj[key]) + "&";
+		if(stripWhiteAndLowerCase || false) {
+			let tempKey = key.toString().replace(/\s/g,"").toLowerCase();
+			let tempValue = paramObj[key].toString().replace(/\s/g,"").toLowerCase();
+			returnString += encodeURIComponent(tempKey) + "=" + encodeURIComponent(tempValue) + "&";
+		} else {
+			returnString += encodeURIComponent(key) + "=" + encodeURIComponent(paramObj[key]) + "&";
+		}
 	}
 	return returnString.slice(0, -1);
 }
@@ -55,6 +61,6 @@ var printbadgeinfo = function() {
 	if(!reservationDataFound) {
 		alert("No Registration Data Displayed for Printing.\n\nPlease Select a Registration and Try Again.");
 	} else {
-		window.open('https://boeltjen.github.io/vms/printbadge.html?'+createUrlSearchString(reservationDataFound), 'PRINT', 'height=500,width=700');
+		window.open('https://boeltjen.github.io/vms/printbadge.html?'+createUrlSearchString(reservationDataFound,true), 'PRINT', 'height=500,width=700');
 	}
 }
