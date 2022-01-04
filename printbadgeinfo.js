@@ -42,13 +42,12 @@ var getBadgeInfo = function() {
 	return reservationData;
 }
 
-var createUrlSearchString = function(paramObj,stripWhiteAndLowerCase) {
+var createUrlSearchString = function(paramObj,stripWhiteAndLowerCaseParams) {
 	var returnString = "";
 	for (var key in paramObj) {
-		if(stripWhiteAndLowerCase || false) {
+		if(stripWhiteAndLowerCaseParams || false) {
 			let tempKey = key.toString().replace(/\s/g,"").toLowerCase();
-			let tempValue = paramObj[key].toString().replace(/\s/g,"").toLowerCase();
-			returnString += encodeURIComponent(tempKey) + "=" + encodeURIComponent(tempValue) + "&";
+			returnString += encodeURIComponent(tempKey) + "=" + encodeURIComponent(paramObj[key]) + "&";
 		} else {
 			returnString += encodeURIComponent(key) + "=" + encodeURIComponent(paramObj[key]) + "&";
 		}
