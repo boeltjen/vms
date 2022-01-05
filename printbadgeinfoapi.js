@@ -16,8 +16,7 @@ var getBadgeInfoFromApi = function() {
 			}
 		});
 		if(!ticketKey) {
-			console.log("No Open Tickets found");
-			reject(false);
+			reject("No Registration Data Displayed for Printing.\n\nPlease Select a Registration and Try Again.");
 			return false;
 		}
 
@@ -39,13 +38,13 @@ var getBadgeInfoFromApi = function() {
 						return;
 					} 
 					else if ( this.status > 299 && this.readyState == 4) {
-						console.log('ServerError:' + reservationsXhr.statusText);
-						reject({reservationsXhr});
+						console.log({reservationsXhr});
+						reject('ServerError:' + reservationsXhr.statusText);
 						return;
 					} 
 					else reservationsXhr.onerror = function() {
-						console.log('RequestError' + reservationsXhr.responseText); 
-						reject({reservationsXhr});
+						console.log({reservationsXhr}); 
+						reject('RequestError' + reservationsXhr.responseText);
 						return;						
 					} 
 				};
@@ -81,13 +80,13 @@ var getBadgeInfoFromApi = function() {
 						return;						
 					} 
 					else if ( this.status > 299 && this.readyState == 4) {
-						console.log('ServerError:' + waitingTicketsXhr.statusText);
-						reject({waitingTicketsXhr});
+						console.log({waitingTicketsXhr});
+						reject('ServerError:' + waitingTicketsXhr.statusText);
 						return;
 					} 
 					else waitingTicketsXhr.onerror = function() {
-						console.log('RequestError' + waitingTicketsXhr.responseText); 
-						reject({waitingTicketsXhr});
+						console.log({waitingTicketsXhr}); 
+						reject('RequestError' + waitingTicketsXhr.responseText);
 						return;					
 					} 
 				};
@@ -144,20 +143,19 @@ var getBadgeInfoFromApi = function() {
 					//currently only providing the single open card ticket
 					resolve(ticketsDataArray[0]);
 					return;
-				}).catch(()=> {
-					console.log("promise error",this);
-					reject(false);
+				}).catch((errorMessages)=> {
+					reject(errorMessages);
 					return;
 				});	
 			} 
 			else if ( this.status > 299 && this.readyState == 4) {
-				console.log('ServerError:' + ticketsXhr.statusText);
-				reject(false);
+				console.log(ticketsXhr);
+				reject('ServerError:' + ticketsXhr.statusText);
 				return;				
 			} 
 			else ticketsXhr.onerror = function() {
-				console.log('RequestError' + ticketsXhr.responseText);
-				reject(false);
+				console.log(ticketsXhr);
+				reject('RequestError' + ticketsXhr.responseText);
 				return;
 			} 
 		};
@@ -174,13 +172,13 @@ var getBadgeInfoFromApi = function() {
 				ticketsXhr.send(); 
 			} 
 			else if ( this.status > 299 && this.readyState == 4) {
-				console.log('ServerError:' + authTokenXhr.statusText);
-				reject(false);
+				console.log(authTokenXhr);
+				reject('ServerError:' + authTokenXhr.statusText);
 				return;
 			} 
 			else authTokenXhr.onerror = function() {
-				console.log('RequestError' + authTokenXhr.responseText);
-				reject(false);
+				console.log(authTokenXhr);
+				reject('RequestError' + authTokenXhr.responseText);
 				return;
 			} 
 		};  
@@ -210,9 +208,9 @@ var printbadgeinfo = function() {
 	getBadgeInfoFromApi().then((reservationDataFound)=>{
 		console.log("reservationDataFound",reservationDataFound);
 // 		window.open('https://boeltjen.github.io/vms/printbadge.html?'+createUrlSearchString(reservationDataFound,true), 'PRINT', 'height=500,width=700');
-	}).catch((errorifany)=> {
-		console.log("promise error",errorifany);
-		alert("No Registration Data Displayed for Printing.\n\nPlease Select a Registration and Try Again.");
+	}).catch((errorMessages)=> {
+		console.log("Error",errorMessages);
+		alert(errorMessages);
 	});	
 	
 }
