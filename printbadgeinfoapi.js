@@ -192,7 +192,7 @@ var createUrlSearchString = function(paramObj,stripWhiteAndLowerCaseParams) {
 }
 
 var printbadgeinfo = function() {
-	getBadgeInfoFromApi.then((reservationDataFound)=>{
+	getBadgeInfoFromApi().then((reservationDataFound)=>{
 		console.log("reservationDataFound",reservationDataFound);
 // 		window.open('https://boeltjen.github.io/vms/printbadge.html?'+createUrlSearchString(reservationDataFound,true), 'PRINT', 'height=500,width=700');
 	}).catch(()=> {
