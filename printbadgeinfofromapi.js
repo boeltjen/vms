@@ -74,6 +74,21 @@ var getBadgeInfoFromApi = function() {
 								ticketsData[ticketId]["queue"] = waitingTicketObj.queueName;
 								ticketsData[ticketId]["reservationTime"] = (new Date(waitingTicketObj.reservationTime)).toTimeString().substr(0,5);
 								ticketsData[ticketId]["createTime"] = (new Date(waitingTicketObj.createdAt)).toTimeString().substr(0,5);
+							
+								var bracketsCheckRegex = /\((.*?)\)/;		
+								var tempQueueLocation = (ticketsData[ticketId]["queue"].match(bracketsCheckRegex) || [""]).pop();
+
+								if((/councillor office/i).test(ticketsData[ticketId]["category"]) && tempQueueLocation) {
+									ticketsData[ticketId]["category"] = tempQueueLocation;
+								}
+
+								if((/councillor/i).test(ticketsData[ticketId]["queue"])) {
+									ticketsData[ticketId]["queue"] = ticketsData[ticketId]["queue"].substring(0,ticketsData[ticketId]["queue"].toLowerCase().indexOf(" - ward"));
+								}
+								var tempDate = new Date();
+								ticketsData[ticketId]["currentDateStr"] = tempDate.toDateString().substr(0,10).replace(/ /g,"-").toUpperCase();
+								ticketsData[ticketId]["currentShortDateStr"] = tempDate.toDateString().substr(4,6).replace(/ /g,"-").toUpperCase();
+								ticketsData[ticketId]["currentTimeStr"] = tempDate.toTimeString().substr(0,5);
 							}
 						});
 						resolve(true);
