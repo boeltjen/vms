@@ -17,6 +17,7 @@ var getBadgeInfoFromApi = function() {
 		});
 		if(!ticketKey) {
 			console.log("No Open Tickets found");
+			reject(false);
 		}
 
 		var addReservationDataToTicket = function(ticketId) {
