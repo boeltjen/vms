@@ -15,6 +15,7 @@ var getBadgeInfoFromApi = function() {
 			reject("No Registration Data Displayed for Printing.\n\nPlease Select a Registration and Try Again.");
 			return false;
 		}
+		var employeeId = JSON.parse(localStorage.getItem("employee")).employeeId;
 
 		var addReservationDataToTicket = function(ticketId) {
 
@@ -48,7 +49,7 @@ var getBadgeInfoFromApi = function() {
 				reservationsXhr.open("GET", encodeURI("https://counter-api.frontdesksuite.ca/api/v1/reservations/reservation-field-values?reservationId=" + ticketsData[ticketId].reservation.reservationId)); 
 
 				reservationsXhr.setRequestHeader('Authorization', 'Bearer ' + tempAuthToken);
-
+				reservationsXhr.setRequestHeader('fd_emp_id', employeeId);
 				reservationsXhr.send();
 			});
 		};
@@ -105,7 +106,7 @@ var getBadgeInfoFromApi = function() {
 				waitingTicketsXhr.open("GET", encodeURI("https://counter-api.frontdesksuite.ca/api/v1/tickets/waiting-tickets")); 
 
 				waitingTicketsXhr.setRequestHeader('Authorization', 'Bearer ' + tempAuthToken);
-				waitingTicketsXhr.setRequestHeader('fd_emp_id', '8488');
+				waitingTicketsXhr.setRequestHeader('fd_emp_id', employeeId);
 
 				waitingTicketsXhr.send();
 			});
@@ -179,6 +180,8 @@ var getBadgeInfoFromApi = function() {
 				tempAuthToken = responseObj.token;
 				ticketsXhr.open("GET", encodeURI("https://counter-api.frontdesksuite.ca/api/v1/tickets/" + ticketKey)); 
 				ticketsXhr.setRequestHeader('Authorization', 'Bearer ' + tempAuthToken);
+				ticketsXhr.setRequestHeader('fd_emp_id', employeeId);
+				
 				ticketsXhr.setRequestHeader("Content-type","application/json");
 				ticketsXhr.send(); 
 			} 
@@ -196,6 +199,8 @@ var getBadgeInfoFromApi = function() {
 
 
 		authTokenXhr.open("GET", encodeURI("https://app.frontdesksuite.ca/torontotest/token")); 
+		authTokenXhr.setRequestHeader('fd_emp_id', employeeId);
+		authTokenXhr.setRequestHeader("Content-type","application/json");
 		authTokenXhr.send(); 
 
 	});
