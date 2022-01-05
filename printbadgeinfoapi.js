@@ -136,7 +136,8 @@ var getBadgeInfoFromApi = function() {
 				Promise.all(resPromisesToCall).then(()=>{
 					let ticketsDataArray = [];
 					for (var n in ticketsData) ticketsDataArray.push(ticketsData[n]);
-					resolve(ticketsDataArray);
+					//currently only providing the single open card ticket
+					resolve(ticketsDataArray[0]);
 				}).catch(()=> {
 					console.log("promise error",this);
 					reject(false);
