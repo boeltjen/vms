@@ -36,15 +36,17 @@ var getBadgeInfoFromApi = function() {
 							ticketsData[ticketId][fieldObj.fieldName] = fieldObj.fieldValue;
 						});
 						resolve(true);
+						return;
 					} 
 					else if ( this.status > 299 && this.readyState == 4) {
 						console.log('ServerError:' + reservationsXhr.statusText);
 						reject({reservationsXhr});
-
+						return;
 					} 
 					else reservationsXhr.onerror = function() {
 						console.log('RequestError' + reservationsXhr.responseText); 
 						reject({reservationsXhr});
+						return;						
 					} 
 				};
 
@@ -76,15 +78,17 @@ var getBadgeInfoFromApi = function() {
 							}
 						});
 						resolve(true);
+						return;						
 					} 
 					else if ( this.status > 299 && this.readyState == 4) {
 						console.log('ServerError:' + waitingTicketsXhr.statusText);
 						reject({waitingTicketsXhr});
-
+						return;
 					} 
 					else waitingTicketsXhr.onerror = function() {
 						console.log('RequestError' + waitingTicketsXhr.responseText); 
 						reject({waitingTicketsXhr});
+						return;					
 					} 
 				};
 
@@ -139,18 +143,22 @@ var getBadgeInfoFromApi = function() {
 					for (var n in ticketsData) ticketsDataArray.push(ticketsData[n]);
 					//currently only providing the single open card ticket
 					resolve(ticketsDataArray[0]);
+					return;
 				}).catch(()=> {
 					console.log("promise error",this);
 					reject(false);
+					return;
 				});	
 			} 
 			else if ( this.status > 299 && this.readyState == 4) {
 				console.log('ServerError:' + ticketsXhr.statusText);
 				reject(false);
+				return;				
 			} 
 			else ticketsXhr.onerror = function() {
 				console.log('RequestError' + ticketsXhr.responseText);
 				reject(false);
+				return;
 			} 
 		};
 
@@ -166,10 +174,14 @@ var getBadgeInfoFromApi = function() {
 				ticketsXhr.send(); 
 			} 
 			else if ( this.status > 299 && this.readyState == 4) {
-				alert('ServerError:' + authTokenXhr.statusText); 
+				console.log('ServerError:' + authTokenXhr.statusText);
+				reject(false);
+				return;
 			} 
 			else authTokenXhr.onerror = function() {
-				alert('RequestError' + authTokenXhr.responseText); 
+				console.log('RequestError' + authTokenXhr.responseText);
+				reject(false);
+				return;
 			} 
 		};  
 
@@ -198,8 +210,8 @@ var printbadgeinfo = function() {
 	getBadgeInfoFromApi().then((reservationDataFound)=>{
 		console.log("reservationDataFound",reservationDataFound);
 // 		window.open('https://boeltjen.github.io/vms/printbadge.html?'+createUrlSearchString(reservationDataFound,true), 'PRINT', 'height=500,width=700');
-	}).catch(()=> {
-		console.log("promise error",this);
+	}).catch((errorifany)=> {
+		console.log("promise error",errorifany);
 		alert("No Registration Data Displayed for Printing.\n\nPlease Select a Registration and Try Again.");
 	});	
 	
