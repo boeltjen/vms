@@ -135,7 +135,6 @@ var getBadgeInfoFromApi = function() {
 				Promise.all(resPromisesToCall).then(()=>{
 					let ticketsDataArray = [];
 					for (var n in ticketsData) ticketsDataArray.push(ticketsData[n]);
-					console.log("ticketsDataArray",ticketsDataArray);
 					resolve(ticketsDataArray);
 				}).catch(()=> {
 					console.log("promise error",this);
@@ -193,19 +192,12 @@ var createUrlSearchString = function(paramObj,stripWhiteAndLowerCaseParams) {
 }
 
 var printbadgeinfo = function() {
-	Promise.all(getBedgeInfoFromApi).then(()=>{
-		let ticketsDataArray = [];
-		for (var n in ticketsData) ticketsDataArray.push(ticketsData[n]);
-		console.log("ticketsDataArray",ticketsDataArray);
-		resolve(ticketsDataArray);
-		if(!reservationDataFound) {
-			alert("No Registration Data Displayed for Printing.\n\nPlease Select a Registration and Try Again.");
-		} else {
-			window.open('https://boeltjen.github.io/vms/printbadge.html?'+createUrlSearchString(reservationDataFound,true), 'PRINT', 'height=500,width=700');
-		}
+	Promise.all(getBadgeInfoFromApi).then((reservationDataFound)=>{
+		console.log("reservationDataFound",reservationDataFound);
+// 		window.open('https://boeltjen.github.io/vms/printbadge.html?'+createUrlSearchString(reservationDataFound,true), 'PRINT', 'height=500,width=700');
 	}).catch(()=> {
 		console.log("promise error",this);
-		reject(false);
+		alert("No Registration Data Displayed for Printing.\n\nPlease Select a Registration and Try Again.");
 	});	
 	
 }
