@@ -177,6 +177,7 @@
 		for (var param in badgeInfoParams) {
 			(document.querySelector("#"+param) || {}).innerHTML = (escapeString((badgeInfoParams[param] || "").toString())).trim();
 		}
+		if(badgeInfoParams["reservationtime"] || false) document.querySelector("#"+param).innerHTML = (escapeString((badgeInfoParams["reservationtime"]).toString())).trim();
 
 	</script>
 </body>
