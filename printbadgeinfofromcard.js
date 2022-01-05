@@ -1,4 +1,4 @@
-var getBadgeInfo = function() {	
+var getBadgeInfoFromCard = function() {	
 	var reservationFieldDivParent = document.getElementsByClassName('reservation-field-values')[0];
 	var reservationData = {};
 	if(reservationFieldDivParent == undefined) {
@@ -60,7 +60,7 @@ var createUrlSearchString = function(paramObj,stripWhiteAndLowerCaseParams) {
 }
 
 var printbadgeinfo = function() {
-	var reservationDataFound = getBadgeInfo();
+	var reservationDataFound = getBadgeInfoFromCard();
 	if(!reservationDataFound) {
 		alert("No Registration Data Displayed for Printing.\n\nPlease Select a Registration and Try Again.");
 	} else {
