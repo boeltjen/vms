@@ -18,28 +18,28 @@ var getBadgeInfo = function() {
 	
 		if(document.querySelectorAll(".ticket").length > 0) {
 			/*if the ticket is still waiting, but being previewed:*/
-			reservationData["Category"] = (document.querySelectorAll(".actions")[0].parentElement.querySelectorAll(".category")[0] || {"innerText":""}).innerText.trim();
-			reservationData["Queue"] = (document.querySelectorAll(".actions")[0].parentElement.querySelectorAll(".queue")[0] || {"innerText":""}).innerText.trim();
-			reservationData["WaitTimeMinutes"] = (document.querySelectorAll(".actions")[0].parentElement.querySelectorAll("[key='WaitTimeMinutes']")[0] || {"innerText":""}).innerText.trim().slice(0,-5);
-			reservationData["ReservationTime"] = (document.querySelectorAll(".actions")[0].parentElement.querySelectorAll(".display-text")[0] || {"innerText":""}).innerText.trim();
+			reservationData["category"] = (document.querySelectorAll(".actions")[0].parentElement.querySelectorAll(".category")[0] || {"innerText":""}).innerText.trim();
+			reservationData["queue"] = (document.querySelectorAll(".actions")[0].parentElement.querySelectorAll(".queue")[0] || {"innerText":""}).innerText.trim();
+			reservationData["waitTimeMinutes"] = (document.querySelectorAll(".actions")[0].parentElement.querySelectorAll("[key='WaitTimeMinutes']")[0] || {"innerText":""}).innerText.trim().slice(0,-5);
+			reservationData["reservationTimeStr"] = (document.querySelectorAll(".actions")[0].parentElement.querySelectorAll(".display-text")[0] || {"innerText":""}).innerText.trim();
 			
 		} else {
 			/*if the ticket is being called:*/
-			reservationData["Category"] = (document.querySelectorAll(".category")[0] || {"innerText":""}).innerText.trim();
-			reservationData["Queue"] = (document.querySelectorAll(".queue")[0] || {"innerText":""}).innerText.trim();
-			reservationData["WaitTimeMinutes"] = (document.querySelectorAll("[key='WaitTimeMinutes']")[0] || {"innerText":""}).innerText.trim().slice(0,-5);
-			reservationData["ReservationTime"] = (document.querySelectorAll(".display-text")[0] || {"innerText":""}).innerText.trim();
+			reservationData["category"] = (document.querySelectorAll(".category")[0] || {"innerText":""}).innerText.trim();
+			reservationData["queue"] = (document.querySelectorAll(".queue")[0] || {"innerText":""}).innerText.trim();
+			reservationData["waitTimeMinutes"] = (document.querySelectorAll("[key='WaitTimeMinutes']")[0] || {"innerText":""}).innerText.trim().slice(0,-5);
+			reservationData["reservationTime"] = (document.querySelectorAll(".display-text")[0] || {"innerText":""}).innerText.trim();
 		}
 
 		var bracketsCheckRegex = /\((.*?)\)/;		
-		var tempQueueLocation = (reservationData["Queue"].match(bracketsCheckRegex) || [""]).pop();
+		var tempQueueLocation = (reservationData["queue"].match(bracketsCheckRegex) || [""]).pop();
 
-		if((/councillor office/i).test(reservationData["Category"]) && tempQueueLocation) {
-			reservationData["Category"] = tempQueueLocation;
+		if((/councillor office/i).test(reservationData["category"]) && tempQueueLocation) {
+			reservationData["category"] = tempQueueLocation;
 		}
 
-		if((/councillor/i).test(reservationData["Queue"])) {
-			reservationData["Queue"] = reservationData["Queue"].substring(0,reservationData["Queue"].toLowerCase().indexOf(" - ward"));
+		if((/councillor/i).test(reservationData["queue"])) {
+			reservationData["queue"] = reservationData["queue"].substring(0,reservationData["queue"].toLowerCase().indexOf(" - ward"));
 		}
 
 	}
