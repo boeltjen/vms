@@ -18,7 +18,7 @@ var getBadgeInfoFromApi = function() {
 							singleResObj[fieldObj.fieldName] = fieldObj.fieldValue;
 							ticketsData[ticketId][fieldObj.fieldName] = fieldObj.fieldValue;
 						});
-						resolve(true);
+						resolve(singleResObj);
 						return;
 					} 
 					else if ( this.status > 299 && this.readyState == 4) {
@@ -50,27 +50,30 @@ var getBadgeInfoFromApi = function() {
 				organizationQueuesXhr.onreadystatechange = function() {
 
 					if (this.readyState == 4 && this.status == 200) {
-						var responseObj = JSON.parse(this.responseText); 
+						var responseObj = JSON.parse(this.responseText);
+						var additionalQueueData = {};
 						var organizationQueues = responseObj.data;
 						organizationQueues.forEach(function(queueObj) {
 							if(queueObj.id == queueId) {
 								ticketsData[ticketId]["queue"] = queueObj.name;						
+								additionalQueueData["queue"] = queueObj.name;						
 								queueObj.categories.forEach(function(categoryObj) {
 									if(categoryObj.id == categoryId) {
 										ticketsData[ticketId]["category"] = categoryObj.name;
+										additionalQueueData["category"] = categoryObj.name;
 									}
 								});
 							}
 						});
 						var bracketsCheckRegex = /\((.*?)\)/;		
-						var tempQueueLocation = (ticketsData[ticketId]["queue"].match(bracketsCheckRegex) || [""]).pop();
+						var tempQueueLocation = (additionalQueueData["queue"].match(bracketsCheckRegex) || [""]).pop();
 
-						if((/councillor office/i).test(ticketsData[ticketId]["category"]) && tempQueueLocation) {
-							ticketsData[ticketId]["category"] = tempQueueLocation;
+						if((/councillor office/i).test(additionalQueueData["category"]) && tempQueueLocation) {
+							additionalQueueData["category"] = tempQueueLocation;
 						}
 
-						if((/councillor/i).test(ticketsData[ticketId]["queue"])) {
-							ticketsData[ticketId]["queue"] = ticketsData[ticketId]["queue"].substring(0,ticketsData[ticketId]["queue"].toLowerCase().indexOf(" - ward"));
+						if((/councillor/i).test(additionalQueueData["queue"])) {
+							additionalQueueData["queue"] = additionalQueueData["queue"].substring(0,additionalQueueData["queue"].toLowerCase().indexOf(" - ward"));
 						}
 						
 						resolve(true);
@@ -107,8 +110,8 @@ var getBadgeInfoFromApi = function() {
 					var rawTick = responseObj.data;
 					var resPromisesToCall = [];
 
-					let lastOperation = rawTick.operations[rawTick.operations.length-1];
-					let tickDataEle = {
+					var lastOperation = rawTick.operations[rawTick.operations.length-1];
+					var tickDataEle = {
 						"id":rawTick.ticketId,
 						"reservationTimeStr":rawTick.displayText,
 						"queueCategoryId" :	lastOperation.queueCategoryId,
@@ -150,11 +153,17 @@ var getBadgeInfoFromApi = function() {
 						ticketsData[tickDataEle.id] = tickDataEle;
 					}
 
-					Promise.all(resPromisesToCall).then(()=>{
+					Promise.all(resPromisesToCall).then((arrayOfParamObjs)=>{
+						
+						arrayOfParamObjs.forEach(function(paramsToAdd) {
+							for (var key in paramsToAdd) tickDataEle[key] = paramsToAdd[key];
+						});
+						
 						let ticketsDataArray = [];
 						for (var n in ticketsData) ticketsDataArray.push(ticketsData[n]);
 						//currently only providing the single open card ticket
-						resolve(ticketsDataArray[0]);
+						
+						resolve(tickDataEle);
 						return;
 					}).catch((errorMessages)=> {
 						reject(errorMessages);
