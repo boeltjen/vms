@@ -75,7 +75,9 @@ var getBadgeInfoFromApi = function() {
 								ticketsData[ticketId]["category"] = waitingTicketObj.queueCategoryName;
 								ticketsData[ticketId]["queue"] = waitingTicketObj.queueName;
 								ticketsData[ticketId]["reservationTime"] = (new Date(waitingTicketObj.reservationTime)).toTimeString().substr(0,5);
+								ticketsData[ticketId]["reservationDate"] = (new Date(waitingTicketObj.reservationTime)).toDateString().substr(4,6).replace(/ /g,"-").toUpperCase();
 								ticketsData[ticketId]["createTime"] = (new Date(waitingTicketObj.createdAt)).toTimeString().substr(0,5);
+								ticketsData[ticketId]["createDate"] = (new Date(waitingTicketObj.createdAt)).toDateString().substr(4,6).replace(/ /g,"-").toUpperCase();
 							
 								var bracketsCheckRegex = /\((.*?)\)/;		
 								var tempQueueLocation = (ticketsData[ticketId]["queue"].match(bracketsCheckRegex) || [""]).pop();
