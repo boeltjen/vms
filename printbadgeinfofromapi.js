@@ -146,7 +146,6 @@ var getBadgeInfoFromApi = function() {
 						resPromisesToCall.push(addReservationDataToTicket(tickDataEle.id,tempAuthToken,employeeId));
 						resPromisesToCall.push(addQueueDataToTicket(tickDataEle.id,tickDataEle.queueId,tickDataEle.queueCategoryId,tempAuthToken,employeeId));
 						
-						delete tickDataEle.reservation;
 						ticketsData[tickDataEle.id] = tickDataEle;
 					}
 
@@ -237,6 +236,7 @@ var getBadgeInfoFromApi = function() {
 var createUrlSearchString = function(paramObj,stripWhiteAndLowerCaseParams) {
 	var returnString = "";
 	for (var key in paramObj) {
+		if(typeof paramObj[key] === 'object' || typeof paramObj[key] === 'function') continue;
 		if(stripWhiteAndLowerCaseParams || false) {
 			let tempKey = key.toString().replace(/\s/g,"").toLowerCase();
 			returnString += encodeURIComponent(tempKey) + "=" + encodeURIComponent(paramObj[key]) + "&";
