@@ -74,11 +74,7 @@ var getBadgeInfoFromApi = function() {
 							if(waitingTicketObj.ticketId == ticketId) {
 								ticketsData[ticketId]["category"] = waitingTicketObj.queueCategoryName;
 								ticketsData[ticketId]["queue"] = waitingTicketObj.queueName;
-								ticketsData[ticketId]["reservationTime"] = (new Date(waitingTicketObj.reservationTime)).toTimeString().substr(0,5);
-								ticketsData[ticketId]["reservationDate"] = (new Date(waitingTicketObj.reservationTime)).toDateString().substr(4,6).replace(/ /g,"-").toUpperCase();
-								ticketsData[ticketId]["createTime"] = (new Date(waitingTicketObj.createdAt)).toTimeString().substr(0,5);
-								ticketsData[ticketId]["createDate"] = (new Date(waitingTicketObj.createdAt)).toDateString().substr(4,6).replace(/ /g,"-").toUpperCase();
-							
+								
 								var bracketsCheckRegex = /\((.*?)\)/;		
 								var tempQueueLocation = (ticketsData[ticketId]["queue"].match(bracketsCheckRegex) || [""]).pop();
 
@@ -89,10 +85,6 @@ var getBadgeInfoFromApi = function() {
 								if((/councillor/i).test(ticketsData[ticketId]["queue"])) {
 									ticketsData[ticketId]["queue"] = ticketsData[ticketId]["queue"].substring(0,ticketsData[ticketId]["queue"].toLowerCase().indexOf(" - ward"));
 								}
-								var tempDate = new Date();
-								ticketsData[ticketId]["currentDateStr"] = tempDate.toDateString().substr(0,10).replace(/ /g,"-").toUpperCase();
-								ticketsData[ticketId]["currentShortDateStr"] = tempDate.toDateString().substr(4,6).replace(/ /g,"-").toUpperCase();
-								ticketsData[ticketId]["currentTimeStr"] = tempDate.toTimeString().substr(0,5);
 							}
 						});
 						resolve(true);
@@ -136,8 +128,16 @@ var getBadgeInfoFromApi = function() {
 					"queueId" :	lastOperation.queueId,
 					"reservation" : rawTick.reservation,
 					"state" : rawTick.state
-
 				};
+				
+				tickDataEle["createTime"] = (new Date(lastOperation.createdAt)).toTimeString().substr(0,5);
+				tickDataEle["createDate"] = (new Date(lastOperation.createdAt)).toDateString().substr(4,6).replace(/ /g,"-").toUpperCase();
+
+				var tempDate = new Date();
+				tickDataEle["currentDateStr"] = tempDate.toDateString().substr(0,10).replace(/ /g,"-").toUpperCase();
+				tickDataEle["currentShortDateStr"] = tempDate.toDateString().substr(4,6).replace(/ /g,"-").toUpperCase();
+				tickDataEle["currentTimeStr"] = tempDate.toTimeString().substr(0,5);
+				
 				switch (tickDataEle.state) {
 					case 1:
 						tickDataEle.stateString = "waiting";
@@ -151,11 +151,16 @@ var getBadgeInfoFromApi = function() {
 					default:
 						tickDataEle.stateString = "undetermined";
 				}
+				
 				if (tickDataEle.reservation) {
+					tickDataEle["reservationTime"] = (new Date(tickDataEle.reservation.reservationTime)).toTimeString().substr(0,5);
+					tickDataEle["reservationDate"] = (new Date(tickDataEle.reservation.reservationTime)).toDateString().substr(4,6).replace(/ /g,"-").toUpperCase();
+				
 					ticketsData[tickDataEle.id] = tickDataEle;
 					resPromisesToCall.push(addReservationDataToTicket(tickDataEle.id));
 					resPromisesToCall.push(addQueueDataToTicket(tickDataEle.id));
 				}
+				
 				Promise.all(resPromisesToCall).then(()=>{
 					let ticketsDataArray = [];
 					for (var n in ticketsData) ticketsDataArray.push(ticketsData[n]);
