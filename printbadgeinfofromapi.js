@@ -43,7 +43,7 @@ var getBadgeInfoFromApi = function() {
 
 
 
-		var addQueueDataToTicket = function(ticketId,tempAuthToken,employeeId) {
+		var addQueueDataToTicket = function(ticketId,queueId,categoryId,tempAuthToken,employeeId) {
 
 			return new Promise((resolve,reject) => {
 				var organizationQueuesXhr = new XMLHttpRequest(); 
@@ -145,7 +145,7 @@ var getBadgeInfoFromApi = function() {
 
 						ticketsData[tickDataEle.id] = tickDataEle;
 						resPromisesToCall.push(addReservationDataToTicket(tickDataEle.id,tempAuthToken,employeeId));
-						resPromisesToCall.push(addQueueDataToTicket(tickDataEle.id,tempAuthToken,employeeId));
+						resPromisesToCall.push(addQueueDataToTicket(tickDataEle.id,tickDataEle.queueId,tickDataEle.queueCategoryId,tempAuthToken,employeeId));
 					}
 
 					Promise.all(resPromisesToCall).then(()=>{
