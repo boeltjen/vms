@@ -54,7 +54,7 @@ var getBadgeInfoFromApi = function() {
 						var organizationQueues = responseObj.data;
 						organizationQueues.forEach(function(queueObj) {
 							if(queueObj.id == queueId) {
-								ticketsData[ticketId]["category"] = queueObj.name;						
+								ticketsData[ticketId]["queue"] = queueObj.name;						
 								queueObj.categories.forEach(function(categoryObj) {
 									if(categoryObj.id == categoryId) {
 										ticketsData[ticketId]["category"] = categoryObj.name;
