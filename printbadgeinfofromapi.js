@@ -6,11 +6,16 @@ var getBadgeInfoFromApi = function() {
 		var ticketsData = {};
 		var ticketKey = "";
 		var ticketCardElements = document.querySelectorAll("[class^='ticket-'].ticket");
-		ticketCardElements.forEach(function(ticketCard) {
-			if(ticketCard.querySelectorAll(".actions").length) {
-				ticketKey = ticketCard.className.match(/ticket-([a-zA-Z0-9-]*)/i)[1];				
-			}
-		});
+		if(ticketCardElements.length) {
+			ticketCardElements.forEach(function(ticketCard) {
+				if(ticketCard.querySelectorAll(".actions").length) {
+					ticketKey = ticketCard.className.match(/ticket-([a-zA-Z0-9-]*)/i)[1];				
+				}
+			});
+		} else {
+			var pathnameArray = window.location.pathname.split("/");
+			ticketKey = pathnameArray[pathnameArray.length-1];
+		}
 		if(!ticketKey) {
 			reject("No Registration Data Displayed for Printing.\n\nPlease Select a Registration and Try Again.");
 			return false;
