@@ -143,9 +143,11 @@ var getBadgeInfoFromApi = function() {
 						tickDataEle["reservationTime"] = (new Date(tickDataEle.reservation.reservationTime)).toTimeString().substr(0,5);
 						tickDataEle["reservationDate"] = (new Date(tickDataEle.reservation.reservationTime)).toDateString().substr(4,6).replace(/ /g,"-").toUpperCase();
 
-						ticketsData[tickDataEle.id] = tickDataEle;
 						resPromisesToCall.push(addReservationDataToTicket(tickDataEle.id,tempAuthToken,employeeId));
 						resPromisesToCall.push(addQueueDataToTicket(tickDataEle.id,tickDataEle.queueId,tickDataEle.queueCategoryId,tempAuthToken,employeeId));
+						
+						delete tickDataEle.reservation;
+						ticketsData[tickDataEle.id] = tickDataEle;
 					}
 
 					Promise.all(resPromisesToCall).then(()=>{
