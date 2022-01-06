@@ -2,27 +2,9 @@ var getBadgeInfoFromApi = function() {
 	return new Promise((resolve,reject) => {
 		const queryString = window.location.search;
 		const urlParams = new URLSearchParams(queryString);
-		var tempAuthToken = "";
 		var ticketsData = {};
-		var ticketKey = "";
-		var ticketCardElements = document.querySelectorAll("[class^='ticket-'].ticket");
-		if(ticketCardElements.length) {
-			ticketCardElements.forEach(function(ticketCard) {
-				if(ticketCard.querySelectorAll(".actions").length) {
-					ticketKey = ticketCard.className.match(/ticket-([a-zA-Z0-9-]*)/i)[1];				
-				}
-			});
-		} else {
-			var pathnameArray = window.location.pathname.split("/");
-			ticketKey = pathnameArray[pathnameArray.length-1];
-		}
-		if(!ticketKey) {
-			reject("No Registration Data Displayed for Printing.\n\nPlease Select a Registration and Try Again.");
-			return false;
-		}
-		var employeeId = JSON.parse(localStorage.getItem("employee")).employeeId;
-
-		var addReservationDataToTicket = function(ticketId) {
+		
+		var addReservationDataToTicket = function(ticketId,tempAuthToken,employeeId) {
 
 			return new Promise((resolve,reject) => {
 				var reservationsXhr = new XMLHttpRequest(); 
@@ -61,160 +43,191 @@ var getBadgeInfoFromApi = function() {
 
 
 
-		var addQueueDataToTicket = function(ticketId) {
+		var addQueueDataToTicket = function(ticketId,tempAuthToken,employeeId) {
 
 			return new Promise((resolve,reject) => {
-				var waitingTicketsXhr = new XMLHttpRequest(); 
-				waitingTicketsXhr.onreadystatechange = function() {
+				var organizationQueuesXhr = new XMLHttpRequest(); 
+				organizationQueuesXhr.onreadystatechange = function() {
 
 					if (this.readyState == 4 && this.status == 200) {
 						var responseObj = JSON.parse(this.responseText); 
-						var singleResDataRaw = responseObj.data;
-						singleResDataRaw.forEach(function(waitingTicketObj) {
-							if(waitingTicketObj.ticketId == ticketId) {
-								ticketsData[ticketId]["category"] = waitingTicketObj.queueCategoryName;
-								ticketsData[ticketId]["queue"] = waitingTicketObj.queueName;
-								
-								var bracketsCheckRegex = /\((.*?)\)/;		
-								var tempQueueLocation = (ticketsData[ticketId]["queue"].match(bracketsCheckRegex) || [""]).pop();
-
-								if((/councillor office/i).test(ticketsData[ticketId]["category"]) && tempQueueLocation) {
-									ticketsData[ticketId]["category"] = tempQueueLocation;
-								}
-
-								if((/councillor/i).test(ticketsData[ticketId]["queue"])) {
-									ticketsData[ticketId]["queue"] = ticketsData[ticketId]["queue"].substring(0,ticketsData[ticketId]["queue"].toLowerCase().indexOf(" - ward"));
-								}
+						var organizationQueues = responseObj.data;
+						organizationQueues.forEach(function(queueObj) {
+							if(queueObj.id == queueId) {
+								ticketsData[ticketId]["category"] = queueObj.name;						
+								queueObj.categories.forEach(function(categoryObj) {
+									if(categoryObj.id == categoryId) {
+										ticketsData[ticketId]["category"] = categoryObj.name;
+									}
+								});
 							}
 						});
+						var bracketsCheckRegex = /\((.*?)\)/;		
+						var tempQueueLocation = (ticketsData[ticketId]["queue"].match(bracketsCheckRegex) || [""]).pop();
+
+						if((/councillor office/i).test(ticketsData[ticketId]["category"]) && tempQueueLocation) {
+							ticketsData[ticketId]["category"] = tempQueueLocation;
+						}
+
+						if((/councillor/i).test(ticketsData[ticketId]["queue"])) {
+							ticketsData[ticketId]["queue"] = ticketsData[ticketId]["queue"].substring(0,ticketsData[ticketId]["queue"].toLowerCase().indexOf(" - ward"));
+						}
+						
 						resolve(true);
 						return;						
 					} 
 					else if ( this.status > 299 && this.readyState == 4) {
 						console.log({waitingTicketsXhr});
-						reject('ServerError:' + waitingTicketsXhr.statusText);
+						reject('ServerError:' + organizationQueuesXhr.statusText);
 						return;
 					} 
-					else waitingTicketsXhr.onerror = function() {
+					else organizationQueuesXhr.onerror = function() {
 						console.log({waitingTicketsXhr}); 
-						reject('RequestError' + waitingTicketsXhr.responseText);
+						reject('RequestError' + organizationQueuesXhr.responseText);
 						return;					
 					} 
 				};
 
-				waitingTicketsXhr.open("GET", encodeURI("https://counter-api.frontdesksuite.ca/api/v1/tickets/waiting-tickets")); 
+				organizationQueuesXhr.open("GET", encodeURI("https://counter-api.frontdesksuite.ca/api/v1/queues/organization-queues")); 
 
-				waitingTicketsXhr.setRequestHeader('Authorization', 'Bearer ' + tempAuthToken);
-				waitingTicketsXhr.setRequestHeader('fd_emp_id', employeeId);
+				organizationQueuesXhr.setRequestHeader('Authorization', 'Bearer ' + tempAuthToken);
+				organizationQueuesXhr.setRequestHeader('fd_emp_id', employeeId);
 
-				waitingTicketsXhr.send();
+				organizationQueuesXhr.send();
 			});
 		};
 
 
 
-		var ticketsXhr = new XMLHttpRequest(); 
-		ticketsXhr.onreadystatechange = function() {
-			if (this.readyState == 4 && this.status == 200) {
-				var responseObj = JSON.parse(this.responseText); 
-				var rawTick = responseObj.data;
-				var resPromisesToCall = [];
+		var getTicketDataByKey = function(ticketKey,tempAuthToken,employeeId) {
+			var ticketsXhr = new XMLHttpRequest(); 
+			ticketsXhr.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var responseObj = JSON.parse(this.responseText); 
+					var rawTick = responseObj.data;
+					var resPromisesToCall = [];
 
-				let lastOperation = rawTick.operations[rawTick.operations.length-1];
-				let tickDataEle = {
-					"id":rawTick.ticketId,
-					"reservationTimeStr":rawTick.displayText,
-					"queueCategoryId" :	lastOperation.queueCategoryId,
-					"queueId" :	lastOperation.queueId,
-					"reservation" : rawTick.reservation,
-					"state" : rawTick.state
-				};
-				
-				tickDataEle["createTime"] = (new Date(lastOperation.createdAt)).toTimeString().substr(0,5);
-				tickDataEle["createDate"] = (new Date(lastOperation.createdAt)).toDateString().substr(4,6).replace(/ /g,"-").toUpperCase();
+					let lastOperation = rawTick.operations[rawTick.operations.length-1];
+					let tickDataEle = {
+						"id":rawTick.ticketId,
+						"reservationTimeStr":rawTick.displayText,
+						"queueCategoryId" :	lastOperation.queueCategoryId,
+						"queueId" :	lastOperation.queueId,
+						"reservation" : rawTick.reservation,
+						"state" : rawTick.state
+					};
 
-				var tempDate = new Date();
-				tickDataEle["currentDateStr"] = tempDate.toDateString().substr(0,10).replace(/ /g,"-").toUpperCase();
-				tickDataEle["currentShortDateStr"] = tempDate.toDateString().substr(4,6).replace(/ /g,"-").toUpperCase();
-				tickDataEle["currentTimeStr"] = tempDate.toTimeString().substr(0,5);
-				
-				switch (tickDataEle.state) {
-					case 1:
-						tickDataEle.stateString = "waiting";
-						break;
-					case 2:
-						tickDataEle.stateString = "tbd";
-						break;
-					case 3:
-						tickDataEle.stateString = "ended";							
-						break;
-					default:
-						tickDataEle.stateString = "undetermined";
-				}
-				
-				if (tickDataEle.reservation) {
-					tickDataEle["reservationTime"] = (new Date(tickDataEle.reservation.reservationTime)).toTimeString().substr(0,5);
-					tickDataEle["reservationDate"] = (new Date(tickDataEle.reservation.reservationTime)).toDateString().substr(4,6).replace(/ /g,"-").toUpperCase();
-				
-					ticketsData[tickDataEle.id] = tickDataEle;
-					resPromisesToCall.push(addReservationDataToTicket(tickDataEle.id));
-					resPromisesToCall.push(addQueueDataToTicket(tickDataEle.id));
-				}
-				
-				Promise.all(resPromisesToCall).then(()=>{
-					let ticketsDataArray = [];
-					for (var n in ticketsData) ticketsDataArray.push(ticketsData[n]);
-					//currently only providing the single open card ticket
-					resolve(ticketsDataArray[0]);
+					tickDataEle["createTime"] = (new Date(lastOperation.createdAt)).toTimeString().substr(0,5);
+					tickDataEle["createDate"] = (new Date(lastOperation.createdAt)).toDateString().substr(4,6).replace(/ /g,"-").toUpperCase();
+
+					var tempDate = new Date();
+					tickDataEle["currentDateStr"] = tempDate.toDateString().substr(0,10).replace(/ /g,"-").toUpperCase();
+					tickDataEle["currentShortDateStr"] = tempDate.toDateString().substr(4,6).replace(/ /g,"-").toUpperCase();
+					tickDataEle["currentTimeStr"] = tempDate.toTimeString().substr(0,5);
+
+					switch (tickDataEle.state) {
+						case 1:
+							tickDataEle.stateString = "waiting";
+							break;
+						case 2:
+							tickDataEle.stateString = "tbd";
+							break;
+						case 3:
+							tickDataEle.stateString = "ended";							
+							break;
+						default:
+							tickDataEle.stateString = "undetermined";
+					}
+
+					if (tickDataEle.reservation) {
+						tickDataEle["reservationTime"] = (new Date(tickDataEle.reservation.reservationTime)).toTimeString().substr(0,5);
+						tickDataEle["reservationDate"] = (new Date(tickDataEle.reservation.reservationTime)).toDateString().substr(4,6).replace(/ /g,"-").toUpperCase();
+
+						ticketsData[tickDataEle.id] = tickDataEle;
+						resPromisesToCall.push(addReservationDataToTicket(tickDataEle.id,tempAuthToken,employeeId));
+						resPromisesToCall.push(addQueueDataToTicket(tickDataEle.id,tempAuthToken,employeeId));
+					}
+
+					Promise.all(resPromisesToCall).then(()=>{
+						let ticketsDataArray = [];
+						for (var n in ticketsData) ticketsDataArray.push(ticketsData[n]);
+						//currently only providing the single open card ticket
+						resolve(ticketsDataArray[0]);
+						return;
+					}).catch((errorMessages)=> {
+						reject(errorMessages);
+						return;
+					});	
+				} 
+				else if ( this.status > 299 && this.readyState == 4) {
+					console.log(ticketsXhr);
+					reject('ServerError:' + ticketsXhr.statusText);
+					return;				
+				} 
+				else ticketsXhr.onerror = function() {
+					console.log(ticketsXhr);
+					reject('RequestError' + ticketsXhr.responseText);
 					return;
-				}).catch((errorMessages)=> {
-					reject(errorMessages);
-					return;
-				});	
-			} 
-			else if ( this.status > 299 && this.readyState == 4) {
-				console.log(ticketsXhr);
-				reject('ServerError:' + ticketsXhr.statusText);
-				return;				
-			} 
-			else ticketsXhr.onerror = function() {
-				console.log(ticketsXhr);
-				reject('RequestError' + ticketsXhr.responseText);
-				return;
-			} 
+				} 
+			};
+			
+			ticketsXhr.open("GET", encodeURI("https://counter-api.frontdesksuite.ca/api/v1/tickets/" + ticketKey)); 
+			ticketsXhr.setRequestHeader('Authorization', 'Bearer ' + tempAuthToken);
+			ticketsXhr.setRequestHeader('fd_emp_id', employeeId);
+
+			ticketsXhr.setRequestHeader("Content-type","application/json");
+			ticketsXhr.send(); 
+			
 		};
+		
+		var getAuthToken = function(ticketKey, employeeId) {
+			var authTokenXhr = new XMLHttpRequest(); 
+			authTokenXhr.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var responseObj = JSON.parse(this.responseText); 
+					var tempAuthToken = responseObj.token;
+					getTicketDataByKey(ticketKey,tempAuthToken,employeeId);
+				} 
+				else if ( this.status > 299 && this.readyState == 4) {
+					console.log(authTokenXhr);
+					reject('ServerError:' + authTokenXhr.statusText);
+					return;
+				} 
+				else authTokenXhr.onerror = function() {
+					console.log(authTokenXhr);
+					reject('RequestError' + authTokenXhr.responseText);
+					return;
+				} 
+			};  
 
+			authTokenXhr.open("GET", encodeURI("https://app.frontdesksuite.ca/torontotest/token")); 
+			authTokenXhr.setRequestHeader('fd_emp_id', employeeId);
+			authTokenXhr.setRequestHeader("Content-type","application/json");
+			authTokenXhr.send(); 
+		};
+		
+		
+		var tempTicketKey = "";
+		var ticketCardElements = document.querySelectorAll("[class^='ticket-'].ticket");
+		if(ticketCardElements.length) {
+			ticketCardElements.forEach(function(ticketCard) {
+				if(ticketCard.querySelectorAll(".actions").length) {
+					tempTicketKey = ticketCard.className.match(/ticket-([a-zA-Z0-9-]*)/i)[1];				
+				}
+			});
+		} else {
+			var pathnameArray = window.location.pathname.split("/");
+			tempTicketKey = pathnameArray[pathnameArray.length-1];
+		}
+		if(!tempTicketKey) {
+			reject("No Registration Data Displayed for Printing.\n\nPlease Select a Registration and Try Again.");
+			return false;
+		}
+		
+		var tempEmployeeId = JSON.parse(localStorage.getItem("employee")).employeeId;
 
-		var authTokenXhr = new XMLHttpRequest(); 
-		authTokenXhr.onreadystatechange = function() {
-			if (this.readyState == 4 && this.status == 200) {
-				var responseObj = JSON.parse(this.responseText); 
-				tempAuthToken = responseObj.token;
-				ticketsXhr.open("GET", encodeURI("https://counter-api.frontdesksuite.ca/api/v1/tickets/" + ticketKey)); 
-				ticketsXhr.setRequestHeader('Authorization', 'Bearer ' + tempAuthToken);
-				ticketsXhr.setRequestHeader('fd_emp_id', employeeId);
-				
-				ticketsXhr.setRequestHeader("Content-type","application/json");
-				ticketsXhr.send(); 
-			} 
-			else if ( this.status > 299 && this.readyState == 4) {
-				console.log(authTokenXhr);
-				reject('ServerError:' + authTokenXhr.statusText);
-				return;
-			} 
-			else authTokenXhr.onerror = function() {
-				console.log(authTokenXhr);
-				reject('RequestError' + authTokenXhr.responseText);
-				return;
-			} 
-		};  
-
-
-		authTokenXhr.open("GET", encodeURI("https://app.frontdesksuite.ca/torontotest/token")); 
-		authTokenXhr.setRequestHeader('fd_emp_id', employeeId);
-		authTokenXhr.setRequestHeader("Content-type","application/json");
-		authTokenXhr.send(); 
-
+		getAuthToken(tempTicketKey,tempEmployeeId);
+		
 	});
 };
 
