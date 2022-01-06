@@ -4,7 +4,7 @@ var getBadgeInfoFromApi = function() {
 		const urlParams = new URLSearchParams(queryString);
 		var ticketsData = {};
 		
-		var addReservationDataToTicket = function(ticketId,tempAuthToken,employeeId) {
+		var addReservationDataToTicket = function(ticketId,reservationId,tempAuthToken,employeeId) {
 
 			return new Promise((resolve,reject) => {
 				var reservationsXhr = new XMLHttpRequest(); 
@@ -33,7 +33,7 @@ var getBadgeInfoFromApi = function() {
 					} 
 				};
 
-				reservationsXhr.open("GET", encodeURI("https://counter-api.frontdesksuite.ca/api/v1/reservations/reservation-field-values?reservationId=" + ticketsData[ticketId].reservation.reservationId)); 
+				reservationsXhr.open("GET", encodeURI("https://counter-api.frontdesksuite.ca/api/v1/reservations/reservation-field-values?reservationId=" + reservationId)); 
 
 				reservationsXhr.setRequestHeader('Authorization', 'Bearer ' + tempAuthToken);
 				reservationsXhr.setRequestHeader('fd_emp_id', employeeId);
@@ -140,10 +140,11 @@ var getBadgeInfoFromApi = function() {
 					}
 
 					if (tickDataEle.reservation) {
+						tickDataEle["reservationId"] = tickDataEle.reservation.reservationId;
 						tickDataEle["reservationTime"] = (new Date(tickDataEle.reservation.reservationTime)).toTimeString().substr(0,5);
 						tickDataEle["reservationDate"] = (new Date(tickDataEle.reservation.reservationTime)).toDateString().substr(4,6).replace(/ /g,"-").toUpperCase();
 
-						resPromisesToCall.push(addReservationDataToTicket(tickDataEle.id,tempAuthToken,employeeId));
+						resPromisesToCall.push(addReservationDataToTicket(tickDataEle.id,tickDataEle.reservationId,tempAuthToken,employeeId));
 						resPromisesToCall.push(addQueueDataToTicket(tickDataEle.id,tickDataEle.queueId,tickDataEle.queueCategoryId,tempAuthToken,employeeId));
 						
 						ticketsData[tickDataEle.id] = tickDataEle;
