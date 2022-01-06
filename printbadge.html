@@ -129,7 +129,7 @@
 			</div>
 			<div id="badgeContainer">
 				<div class="reservationFields">
-					<div class="visitorlabel">VISITOR-<span id="currentshortdatestr"></span>-<span id="currenttimestr"></span></div>
+					<div class="visitorlabel">VISITOR-<span id="createdate"></span>-<span id="createtime"></span></div>
 					<div class="visitor-name"><span id="Visitorfullname"></span> (<span id="visitortype"></span>)</div>
 					<strong>Visiting: </strong><span id="queue"></span>
 					<br/><strong>Location: </strong><span id="category"></span>
@@ -177,8 +177,9 @@
 		for (var param in badgeInfoParams) {
 			(document.querySelector("#"+param) || {}).innerHTML = (escapeString((badgeInfoParams[param] || "").toString())).trim();
 		}
-		if(badgeInfoParams["reservationtime"] || false) document.querySelector("#"+param).innerHTML = (escapeString((badgeInfoParams["reservationtime"]).toString())).trim();
-
+		if(!(badgeInfoParams["reservationtime"] || false)) document.querySelector("#"+"reservationtime").innerHTML = (escapeString((badgeInfoParams["reservationtimestr"]).toString())).trim();
+		if(!(badgeInfoParams["createtime"] || false)) document.querySelector("#"+"createtime").innerHTML = (escapeString((badgeInfoParams["currenttimestr"]).toString())).trim();
+		if(!(badgeInfoParams["createdate"] || false)) document.querySelector("#"+"createdate").innerHTML = (escapeString((badgeInfoParams["currentshortdatestr"]).toString())).trim();
 	</script>
 </body>
 </html>
