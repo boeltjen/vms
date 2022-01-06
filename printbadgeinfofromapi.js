@@ -76,7 +76,7 @@ var getBadgeInfoFromApi = function() {
 							additionalQueueData["queue"] = additionalQueueData["queue"].substring(0,additionalQueueData["queue"].toLowerCase().indexOf(" - ward"));
 						}
 						
-						resolve(true);
+						resolve(additionalQueueData);
 						return;						
 					} 
 					else if ( this.status > 299 && this.readyState == 4) {
