@@ -2,6 +2,8 @@ var getBadgeInfoFromApi = function() {
 	return new Promise((resolve,reject) => {
 		const queryString = window.location.search;
 		const urlParams = new URLSearchParams(queryString);
+		const noRegistrationErrorStr = "No Registration Data Displayed for Printing.\n\nPlease Select a Registration and Try Again.";
+		
 		var ticketsData = {};
 		
 		var addReservationDataToTicket = function(ticketId,reservationId,tempAuthToken,employeeId) {
@@ -232,7 +234,7 @@ var getBadgeInfoFromApi = function() {
 			else tempTicketKey = false;
 		}
 		if(!tempTicketKey) {
-			reject("No Registration Data Displayed for Printing.\n\nPlease Select a Registration and Try Again.");
+			reject(noRegistrationErrorStr);
 			return false;
 		}
 		
