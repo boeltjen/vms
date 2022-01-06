@@ -149,7 +149,7 @@ var getBadgeInfoFromApi = function() {
 					default:
 						tickDataEle.stateString = "undetermined";
 				}
-				if (tickDataEle.reservation && (tickDataEle.state == 1)) {
+				if (tickDataEle.reservation) {
 					ticketsData[tickDataEle.id] = tickDataEle;
 					resPromisesToCall.push(addReservationDataToTicket(tickDataEle.id));
 					resPromisesToCall.push(addQueueDataToTicket(tickDataEle.id));
