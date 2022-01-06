@@ -228,7 +228,7 @@ var getBadgeInfoFromApi = function() {
 			});
 		} else {
 			var pathnameArray = window.location.pathname.split("/");
-			tempTicketKey = pathnameArray[pathnameArray.length-1];
+			if(pathnameArray[pathnameArray.length-2].toString().toLowerCase().trim() == "process") tempTicketKey = pathnameArray[pathnameArray.length-1];
 		}
 		if(!tempTicketKey) {
 			reject("No Registration Data Displayed for Printing.\n\nPlease Select a Registration and Try Again.");
