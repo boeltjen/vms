@@ -1,4 +1,4 @@
-// const rootPath = "https://boeltjen.github.io/vms";
+const rootPath = "https://boeltjen.github.io/vms";
 
 var getBadgeInfoFromApi = function() {
 	return new Promise((resolve,reject) => {
