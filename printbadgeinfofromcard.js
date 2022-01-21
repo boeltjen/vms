@@ -1,3 +1,5 @@
+const rootPath = "https://boeltjen.github.io/vms";
+
 var getBadgeInfoFromCard = function() {	
 	var reservationFieldDivParent = document.getElementsByClassName('reservation-field-values')[0];
 	var reservationData = {};
@@ -64,6 +66,6 @@ var printbadgeinfo = function() {
 	if(!reservationDataFound) {
 		alert("No Registration Data Displayed for Printing.\n\nPlease Select a Registration and Try Again.");
 	} else {
-		window.open('printbadge.html?'+createUrlSearchString(reservationDataFound,true), 'PRINT', 'height=500,width=700');
+		window.open(rootPath + '/printbadge.html?'+createUrlSearchString(reservationDataFound,true), 'PRINT', 'height=500,width=700');
 	}
 }
