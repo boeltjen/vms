@@ -1,3 +1,5 @@
+const rootPath = "https://boeltjen.github.io/vms";
+
 var getBadgeInfoFromApi = function() {
 	return new Promise((resolve,reject) => {
 		const queryString = window.location.search;
@@ -263,7 +265,7 @@ var createUrlSearchString = function(paramObj,stripWhiteAndLowerCaseParams) {
 var printbadgeinfo = function() {
 	getBadgeInfoFromApi().then((reservationDataFound)=>{
 		console.log("reservationDataFound",reservationDataFound);
-		window.open('printbadge.html?'+createUrlSearchString(reservationDataFound,true), 'PRINT', 'height=500,width=700');
+		window.open(rootPath + '/printbadge.html?'+createUrlSearchString(reservationDataFound,true), 'PRINT', 'height=500,width=700');
 	}).catch((errorMessages)=> {
 		console.log("Error",errorMessages);
 		alert(errorMessages);
